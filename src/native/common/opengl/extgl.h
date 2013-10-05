@@ -70,12 +70,6 @@ THE POSSIBILITY OF SUCH DAMAGE.
 #include <string.h>
 #include <stddef.h>
 
-#ifdef __APPLE__
-    #include <OpenCL/cl_platform.h>
-#else
-    #include <CL/cl_platform.h>
-#endif
-
 #include "common_tools.h"
 
 #if defined(_WIN32) || defined(_WIN64)
@@ -86,7 +80,6 @@ THE POSSIBILITY OF SUCH DAMAGE.
     #define APIENTRY
 #endif
 
-#include "extcl_types.h"
 #include "extgl_types.h"
 
 /* AMD_debug_output callback function pointer. */

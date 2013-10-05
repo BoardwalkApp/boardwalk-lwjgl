@@ -29,19 +29,58 @@
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+package org.lwjgl;
 
-#include <jni.h>
-#include "org_lwjgl_openal_AL.h"
-#include "extal.h"
+import java.security.AccessController;
+import java.security.PrivilegedAction;
+import java.security.PrivilegedExceptionAction;
+import java.lang.UnsatisfiedLinkError;
 
-JNIEXPORT void JNICALL Java_org_lwjgl_openal_AL_nCreate(JNIEnv *env, jclass clazz, jstring oalPath) {
-	extal_LoadLibrary(env, oalPath);
-}
+/**
+ *
+ * @author elias_naur <elias_naur@users.sourceforge.net>, zhuowei
+ * @version $Revision$
+ * $Id$
+ */
+final class AndroidSysImplementation implements SysImplementation {
+	private static final int JNI_VERSION = 19;
 
-JNIEXPORT void JNICALL Java_org_lwjgl_openal_AL_nDestroy(JNIEnv *env, jclass clazz) {
-	extal_UnloadLibrary();
-}
+	public int getJNIVersion() {
+		return JNI_VERSION;
+	}
 
-JNIEXPORT void JNICALL Java_org_lwjgl_openal_AL_resetNativeStubs(JNIEnv *env, jclass clazz, jclass al_class) {
-	(*env)->UnregisterNatives(env, al_class);
+	public int getPointerSize() {
+		return 4;
+	}
+
+	public void setDebug(boolean debug) {
+	}
+
+	public int getRequiredJNIVersion() {
+		return JNI_VERSION;
+	}
+
+	public boolean openURL(final String url) {
+		return false;
+	}
+
+	public boolean has64Bit() {
+		return false;
+	}
+
+	public long getTime() {
+		return System.currentTimeMillis();
+	}
+
+	public void alert(String title, String message) {
+		
+	}
+
+	public String getClipboard() {
+		return null;
+	}
+
+	public long getTimerResolution() {
+		return 1000;
+	}
 }

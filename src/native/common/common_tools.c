@@ -39,6 +39,7 @@
 
 #include <jni.h>
 #include <stdlib.h>
+#include <stdio.h>
 #include "common_tools.h"
 #include "org_lwjgl_DefaultSysImplementation.h"
 

@@ -62,14 +62,7 @@ typedef ALvoid* (ALAPIENTRY *alGetProcAddressPROC)(const ALubyte* fname);
  */
 void* extal_GetProcAddress(const char* function) {
 	void *p;
-/*	p = alGetProcAddress((const ALubyte*)function);
-	if (p == NULL) {*/
-		p = extal_NativeGetFunctionPointer(function);
-		if (p == NULL) {
-			printfDebug("Could not locate symbol %s\n", function);
-		}
-//	}
-	return p;
+	return NULL;
 }
 
 void extal_InitializeClass(JNIEnv *env, jclass clazz, int num_functions, JavaMethodAndExtFunction *functions) {

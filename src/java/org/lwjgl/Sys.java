@@ -128,6 +128,8 @@ public final class Sys {
 				return new WindowsSysImplementation();
 			case LWJGLUtil.PLATFORM_MACOSX:
 				return new MacOSXSysImplementation();
+			case LWJGLUtil.PLATFORM_ANDROID:
+				return new AndroidSysImplementation();
 			default:
 				throw new IllegalStateException("Unsupported platform");
 		}

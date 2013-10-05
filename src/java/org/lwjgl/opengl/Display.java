@@ -52,9 +52,6 @@ import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 
 import java.awt.*;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
-import java.awt.event.ComponentListener;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.security.AccessController;
@@ -123,14 +120,6 @@ public final class Display {
 	/** Initial Background Color of Display */
 	private static float r, g, b;
 
-	private static final ComponentListener component_listener = new ComponentAdapter() {
-		public void componentResized(ComponentEvent e) {
-			synchronized ( GlobalLock.lock ) {
-				parent_resized = true;
-			}
-		}
-	};
-
 	static {
 		Sys.initialize();
 		display_impl = createDisplayImplementation();
@@ -159,6 +148,8 @@ public final class Display {
 				return new WindowsDisplay();
 			case LWJGLUtil.PLATFORM_MACOSX:
 				return new MacOSXDisplay();
+			case LWJGLUtil.PLATFORM_ANDROID:
+				return new AndroidDisplay();
 			default:
 				throw new IllegalStateException("Unsupported platform");
 		}
@@ -299,9 +290,6 @@ public final class Display {
 		Canvas tmp_parent = isFullscreen() ? null : parent;
 		if ( tmp_parent != null && !tmp_parent.isDisplayable() ) // Only a best effort check, since the parent can turn undisplayable hereafter
 			throw new LWJGLException("Parent.isDisplayable() must be true");
-		if ( tmp_parent != null ) {
-			tmp_parent.addComponentListener(component_listener);
-		}
 		DisplayMode mode = getEffectiveMode();
 		display_impl.createWindow(drawable, mode, tmp_parent, getWindowX(), getWindowY());
 		window_created = true;
@@ -335,9 +323,6 @@ public final class Display {
 	private static void destroyWindow() {
 		if ( !window_created ) {
 			return;
-		}
-		if ( parent != null ) {
-			parent.removeComponentListener(component_listener);
 		}
 		releaseDrawable();
 
