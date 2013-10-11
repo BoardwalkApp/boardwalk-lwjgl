@@ -264,7 +264,7 @@ public class LWJGLUtil {
 	public static final ByteBuffer	LWJGLIcon32x32 = loadIcon(LWJGL_ICON_DATA_32x32);
 
 	/** Debug flag. */
-	public static final boolean DEBUG = getPrivilegedBoolean("org.lwjgl.util.Debug");
+	public static final boolean DEBUG = true;/*getPrivilegedBoolean("org.lwjgl.util.Debug");*/
 
 	public static final boolean CHECKS = !getPrivilegedBoolean("org.lwjgl.util.NoChecks");
 

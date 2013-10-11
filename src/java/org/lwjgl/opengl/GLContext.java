@@ -211,9 +211,13 @@ public final class GLContext {
 	/** Helper method to get a pointer to a named function in the OpenGL library. */
 	static long getFunctionAddress(String name) {
 		ByteBuffer buffer = MemoryUtil.encodeASCII("jwzgles_" + name);
+		try {
+			//System.out.println(java.nio.charset.Charset.forName("ISO-8859-1").newDecoder().decode(buffer));
+		} catch (Exception e) {}
 		long retval = ngetFunctionAddress(MemoryUtil.getAddress(buffer));
 		if (retval != 0) return retval;
 		buffer = MemoryUtil.encodeASCII(name);
+		//System.out.println(MemoryUtil.decodeASCII(buffer));
 		return ngetFunctionAddress(MemoryUtil.getAddress(buffer));
 	}
 	private static native long ngetFunctionAddress(long name);
@@ -228,7 +232,7 @@ public final class GLContext {
 	static int getSupportedExtensions(final Set<String> supported_extensions) {
 		// Detect OpenGL version first
 
-		final String version = glGetString(GL_VERSION);
+		final String version = "1.3";/*glGetString(GL_VERSION);*/
 		if ( version == null )
 			throw new IllegalStateException("glGetString(GL_VERSION) returned null - possibly caused by missing current context.");
 

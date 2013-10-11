@@ -97,14 +97,14 @@ public class Gears {
 	/**
 	 *
 	 */
-	private void destroy() {
+	public void destroy() {
 		Display.destroy();
 	}
 
 	/**
 	 *
 	 */
-	private void loop() {
+	public void loop() {
 		long startTime = System.currentTimeMillis() + 5000;
 		long fps = 0;
 
@@ -151,10 +151,45 @@ public class Gears {
 		}
 	}
 
+	public void tick() {
+			angle += 2.0f;
+
+			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+			glPushMatrix();
+			glRotatef(view_rotx, 1.0f, 0.0f, 0.0f);
+			glRotatef(view_roty, 0.0f, 1.0f, 0.0f);
+			glRotatef(view_rotz, 0.0f, 0.0f, 1.0f);
+
+			glPushMatrix();
+			glTranslatef(-3.0f, -2.0f, 0.0f);
+			glRotatef(angle, 0.0f, 0.0f, 1.0f);
+			glCallList(gear1);
+			glPopMatrix();
+
+			glPushMatrix();
+			glTranslatef(3.1f, -2.0f, 0.0f);
+			glRotatef(-2.0f * angle - 9.0f, 0.0f, 0.0f, 1.0f);
+			glCallList(gear2);
+			glPopMatrix();
+
+			glPushMatrix();
+			glTranslatef(-3.1f, 4.2f, 0.0f);
+			glRotatef(-2.0f * angle - 25.0f, 0.0f, 0.0f, 1.0f);
+			//glCallList(gear3);
+		FloatBuffer blue = BufferUtils.createFloatBuffer(4).put(new float[] { 0.2f, 0.2f, 1.0f, 1.0f});
+		blue.flip();
+		glMaterial(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, blue);
+		gear(1.3f, 2.0f, 0.5f, 10, 0.7f);
+			glPopMatrix();
+
+			glPopMatrix();
+	}
+
 	/**
 	 *
 	 */
-	private void init() throws LWJGLException {
+	public void init() throws LWJGLException {
 		// create Window of size 300x300
 		Display.setLocation((Display.getDisplayMode().getWidth() - 300) / 2,
 												(Display.getDisplayMode().getHeight() - 300) / 2);
@@ -201,6 +236,8 @@ public class Gears {
 		glEnable(GL_NORMALIZE);
 
 		glMatrixMode(GL_PROJECTION);
+
+		glClearColor(0.5f, 0.5f, 0.5f, 1);
 
 		System.err.println("LWJGL: " + Sys.getVersion() + " / " + LWJGLUtil.getPlatformName());
 		System.err.println("GL_VENDOR: " + glGetString(GL_VENDOR));

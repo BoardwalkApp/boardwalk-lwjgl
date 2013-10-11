@@ -363,6 +363,10 @@ public final class MemoryUtil {
 			return new CharSequenceNT(source.subSequence(start, Math.min(end, source.length())));
 		}
 
+		public String toString() {
+			return source + "\0";
+		}
+
 	}
 
 	interface Accessor {

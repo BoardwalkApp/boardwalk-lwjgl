@@ -837,7 +837,7 @@ public final class Display {
 							makeCurrentAndSetSwapInterval();
 							initContext();
 						} catch (LWJGLException e) {
-							drawable.destroy();
+							//drawable.destroy();
 							throw e;
 						}
 					} catch (LWJGLException e) {

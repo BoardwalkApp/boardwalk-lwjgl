@@ -83,7 +83,6 @@ final class AndroidDisplay implements DisplayImplementation {
 	private int window_width;
 	private int window_height;
 
-	private Mouse mouse;
 	private Keyboard keyboard;
 
 	public void createWindow(final DrawableLWJGL drawable, DisplayMode mode, Canvas parent, int x, int y) throws LWJGLException {
@@ -115,7 +114,7 @@ final class AndroidDisplay implements DisplayImplementation {
 	}
 
 	public DisplayMode init() throws LWJGLException {
-		return null;
+		return new DisplayMode(1280, 600, 24, 60, true);
 	}
 
 	private static DisplayMode getCurrentXRandrMode() throws LWJGLException {
@@ -154,7 +153,7 @@ final class AndroidDisplay implements DisplayImplementation {
 	}
 
 	public DisplayMode[] getAvailableDisplayModes() throws LWJGLException {
-		return null;
+		return new DisplayMode[] {new DisplayMode(1280, 600, 24, 60, true)};
 	}
 
 	/* Mouse */
@@ -163,14 +162,13 @@ final class AndroidDisplay implements DisplayImplementation {
 	}
 
 	public int getButtonCount() {
-		return mouse.getButtonCount();
+		return 3; //mouse.getButtonCount();
 	}
 
 	public void createMouse() throws LWJGLException {
 	}
 
 	public void destroyMouse() {
-		mouse = null;
 	}
 
 	public void pollMouse(IntBuffer coord_buffer, ByteBuffer buttons) {

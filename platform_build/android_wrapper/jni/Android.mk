@@ -1,6 +1,6 @@
 LOCAL_PATH := $(call my-dir)
 include $(CLEAR_VARS)  
-LOCAL_LDLIBS := -llog
+LOCAL_LDLIBS := -llog -lGLESv1_CM
 LOCAL_MODULE    := lwjgl
 
 cfiles := $(shell find -L $(LOCAL_PATH)/native/common -name "*.c" -printf "native/common/%P \n")

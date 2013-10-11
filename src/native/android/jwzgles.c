@@ -167,6 +167,9 @@
 #elif defined(HAVE_COCOA)
 # include <OpenGL/gl.h>
 # include <OpenGL/glu.h>
+#elif defined(ANDROID)
+# include <GLES/gl.h>
+# include <GLES/glext.h>
 #else /* X11 */
 # ifndef  GL_GLEXT_PROTOTYPES
 #  define GL_GLEXT_PROTOTYPES /* for glBindBuffer */
