@@ -210,14 +210,7 @@ public final class GLContext {
 
 	/** Helper method to get a pointer to a named function in the OpenGL library. */
 	static long getFunctionAddress(String name) {
-		ByteBuffer buffer = MemoryUtil.encodeASCII("jwzgles_" + name);
-		try {
-			//System.out.println(java.nio.charset.Charset.forName("ISO-8859-1").newDecoder().decode(buffer));
-		} catch (Exception e) {}
-		long retval = ngetFunctionAddress(MemoryUtil.getAddress(buffer));
-		if (retval != 0) return retval;
-		buffer = MemoryUtil.encodeASCII(name);
-		//System.out.println(MemoryUtil.decodeASCII(buffer));
+		ByteBuffer buffer = MemoryUtil.encodeASCII(name);
 		return ngetFunctionAddress(MemoryUtil.getAddress(buffer));
 	}
 	private static native long ngetFunctionAddress(long name);

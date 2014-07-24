@@ -18,17 +18,18 @@ public class MainActivity extends Activity
 	public static final String TAG = "LWJGLWrapperTest";
 
 	/** Called when the activity is first created. */
-	private static QuadExample gears;
+	private static Gears gears;
 	private GLSurfaceView mGLView;
 	@Override
 	public void onCreate(Bundle savedInstanceState)
 	{
+		System.loadLibrary("glshim");
 		super.onCreate(savedInstanceState);
 		mGLView = new GLSurfaceView(this);
 		mGLView.setRenderer(new WrappedRenderer());
 
 		setContentView(mGLView);
-		gears = new QuadExample();
+		gears = new Gears();
 
 	}
 
@@ -53,7 +54,7 @@ public class MainActivity extends Activity
 
 	public void initGears() {
 		try {
-			gears.start();
+			gears.init();
 		} catch (Exception e) {
 			e.printStackTrace();
 			finish();
@@ -68,11 +69,12 @@ public class MainActivity extends Activity
 
 		public void onSurfaceChanged(GL10 gl, int w, int h) {
 			Log.i(TAG, "Surface changed");
-			org.lwjgl.opengl.GL11.glViewport(0, 0, w, h);
+			/*org.lwjgl.opengl.GL11.glViewport(0, 0, w, h);
 			org.lwjgl.opengl.GL11.glMatrixMode(org.lwjgl.opengl.GL11.GL_PROJECTION);
 			org.lwjgl.opengl.GL11.glLoadIdentity();
 			org.lwjgl.opengl.GL11.glOrtho(0, w, 0, h, 1, -1);
 			org.lwjgl.opengl.GL11.glMatrixMode(org.lwjgl.opengl.GL11.GL_MODELVIEW);
+			*/
 		}
 
 		public void onDrawFrame(GL10 gl) {
