@@ -8,6 +8,13 @@
 static void* gles1;
 static void* glshim;
 
+#define MAP(func_name, func) \
+    if (strcmp(name, func_name) == 0) name = #func;
+
+#define ARB(func_name) MAP(#func_name "ARB", func_name)
+
+#define EXT(func_name) MAP(#func_name "EXT", func_name)
+
 #define STUB(func_name)                       \
     if (strcmp(name, #func_name) == 0) {      \
         __android_log_print(ANDROID_LOG_INFO, "LWJGLWrapper", "glX stub: %s\n", #func_name); \
@@ -25,6 +32,91 @@ bool extgl_Open(JNIEnv *env) {
 }
 
 void *extgl_GetProcAddress(const char *name) {
+    // glX calls
+
+    // GL_ARB_vertex_buffer_object
+
+/*    ARB(glBindBuffer);
+    ARB(glBufferData);
+    ARB(glBufferSubData);
+    ARB(glDeleteBuffers);
+    ARB(glGenBuffers);
+    ARB(glIsBuffer);
+    MAP_EGL(glGetBufferParameteriARB, glGetBufferParameteriOES);
+    MAP_EGL(glGetBufferPointerARB, glGetBufferPointerOES);
+    MAP_EGL(glGetBufferPointervARB, glGetBufferPointervOES);
+    MAP_EGL(glMapBufferARB, glMapBufferOES);
+    MAP_EGL(glUnmapBufferARB, glMapBufferOES);
+    STUB(glGetBufferParameterivARB);
+    STUB(glGetBufferSubDataARB);*/
+
+    // GL_EXT_vertex_array
+    EXT(glArrayElement);
+    EXT(glDrawArrays);
+    EXT(glVertexPointer);
+    EXT(glNormalPointer);
+    EXT(glColorPointer);
+    //EXT(glIndexPointer);	//TODO
+    EXT(glTexCoordPointer);
+    //EXT(glEdgeFlagPointer);	//TODO
+    //EXT(glGetPointerv);	//TODO
+
+
+    // OES wrapper
+
+    // passthrough
+    // batch thunking!
+    #define THUNK(suffix, type)       \
+    EXT(glSecondaryColor3##suffix##v); \
+    EXT(glSecondaryColor3##suffix);    \
+    EXT(glMultiTexCoord1##suffix##v); \
+    EXT(glMultiTexCoord1##suffix);    \
+    EXT(glMultiTexCoord2##suffix##v); \
+    EXT(glMultiTexCoord2##suffix);    \
+    EXT(glMultiTexCoord3##suffix##v); \
+    EXT(glMultiTexCoord3##suffix);    \
+    EXT(glMultiTexCoord4##suffix##v); \
+    EXT(glMultiTexCoord4##suffix);    \
+    ARB(glMultiTexCoord1##suffix##v); \
+    ARB(glMultiTexCoord1##suffix);    \
+    ARB(glMultiTexCoord2##suffix##v); \
+    ARB(glMultiTexCoord2##suffix);    \
+    ARB(glMultiTexCoord3##suffix##v); \
+    ARB(glMultiTexCoord3##suffix);    \
+    ARB(glMultiTexCoord4##suffix##v); \
+    ARB(glMultiTexCoord4##suffix);
+
+    THUNK(b, GLbyte);
+    THUNK(d, GLdouble);
+    THUNK(i, GLint);
+    THUNK(s, GLshort);
+    THUNK(ub, GLubyte);
+    THUNK(ui, GLuint);
+    THUNK(us, GLushort);
+    THUNK(f, GLfloat);
+    #undef THUNK
+
+#ifdef USE_ES2
+#endif
+
+    // functions we actually define
+    EXT(glActiveTexture);
+    ARB(glActiveTexture);
+    EXT(glArrayElement);
+    EXT(glBlendColor);
+    ARB(glBlendColor);
+    EXT(glBlendEquationSeparatei);
+    ARB(glBlendEquationSeparatei);
+    EXT(glBlendFuncSeparate);
+    ARB(glBlendFuncSeparate);
+    EXT(glBlendFuncSeparatei);
+    ARB(glBlendFuncSeparatei);
+    EXT(glClientActiveTexture);
+    ARB(glClientActiveTexture);
+    EXT(glDrawRangeElements);
+#ifndef USE_ES2
+#endif
+    EXT(glSecondaryColorPointer);
 	void *t = dlsym(glshim, name);
 	if (t == NULL) {
 		//printfDebug("Could not locate symbol %s\n", name);

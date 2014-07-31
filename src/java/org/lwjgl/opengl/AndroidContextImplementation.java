@@ -36,12 +36,22 @@ import org.lwjgl.LWJGLException;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 
+import android.opengl.EGL14;
+import android.opengl.EGLContext;
+import android.opengl.EGLDisplay;
+import android.opengl.EGLSurface;
+
 /**
  * @author elias_naur <elias_naur@users.sourceforge.net>
  * @version $Revision$
  *          $Id$
  */
-final class AndroidContextImplementation implements ContextImplementation {
+public final class AndroidContextImplementation implements ContextImplementation {
+
+	public static EGLDisplay display;
+	public static EGLSurface draw;
+	public static EGLSurface read;
+	public static EGLContext context;
 
 	public ByteBuffer create(PeerInfo peer_info, IntBuffer attribs, ByteBuffer shared_context_handle) throws LWJGLException {
 		return ByteBuffer.allocate(4);
@@ -52,6 +62,7 @@ final class AndroidContextImplementation implements ContextImplementation {
 
 	public void swapBuffers() throws LWJGLException {
 		//TODO: egl swap buffers
+		EGL14.eglSwapBuffers(display, draw);
 	}
 
 	public void releaseCurrentContext() throws LWJGLException {
@@ -61,6 +72,7 @@ final class AndroidContextImplementation implements ContextImplementation {
 	}
 
 	public void makeCurrent(PeerInfo peer_info, ByteBuffer handle) throws LWJGLException {
+		EGL14.eglMakeCurrent(display, draw, read, context);
 	}
 
 

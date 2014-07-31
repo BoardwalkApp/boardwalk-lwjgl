@@ -62,12 +62,12 @@ import java.security.PrivilegedAction;
 import java.util.ArrayList;
 import java.util.List;
 
-final class AndroidDisplay implements DisplayImplementation {
+public final class AndroidDisplay implements DisplayImplementation {
 
 	private boolean keyboard_grabbed;
 	private boolean pointer_grabbed;
 	private boolean input_released;
-	private boolean grab;
+	private static boolean grab;
 	private boolean focused;
 	private boolean minimized;
 	private boolean dirty;
@@ -82,6 +82,25 @@ final class AndroidDisplay implements DisplayImplementation {
 	private int window_y;
 	private int window_width;
 	private int window_height;
+	public static int windowWidth = 1280;
+	public static int windowHeight = 800;
+	public static int mouseX = 0;
+	public static int mouseY = 0;
+	public static int mouseLastEventX = 0;
+	public static int mouseLastEventY = 0;
+	public static int mouseLastX = 0;
+	public static int mouseLastY = 0;
+	public static boolean mouseLeft = false;
+
+	private static final ByteBuffer event_buffer = ByteBuffer.allocate(Mouse.EVENT_SIZE);
+
+	private static EventQueue event_queue = new EventQueue(event_buffer.capacity());
+	private static long last_event_nanos = System.nanoTime();
+	private static final EventQueue keyboardEventQueue = new EventQueue(Keyboard.EVENT_SIZE);
+
+	private static final ByteBuffer keyboardEvent = ByteBuffer.allocate(Keyboard.EVENT_SIZE);
+	private static final byte[] key_down_buffer = new byte[Keyboard.KEYBOARD_SIZE];
+
 
 	private Keyboard keyboard;
 
@@ -114,7 +133,7 @@ final class AndroidDisplay implements DisplayImplementation {
 	}
 
 	public DisplayMode init() throws LWJGLException {
-		return new DisplayMode(1280, 600, 24, 60, true);
+		return new DisplayMode(windowWidth, windowHeight, 24, 60, true);
 	}
 
 	private static DisplayMode getCurrentXRandrMode() throws LWJGLException {
@@ -153,7 +172,7 @@ final class AndroidDisplay implements DisplayImplementation {
 	}
 
 	public DisplayMode[] getAvailableDisplayModes() throws LWJGLException {
-		return new DisplayMode[] {new DisplayMode(1280, 600, 24, 60, true)};
+		return new DisplayMode[] {new DisplayMode(windowWidth, windowHeight, 24, 60, true)};
 	}
 
 	/* Mouse */
@@ -172,15 +191,23 @@ final class AndroidDisplay implements DisplayImplementation {
 	}
 
 	public void pollMouse(IntBuffer coord_buffer, ByteBuffer buttons) {
+		coord_buffer.put(0, grab? mouseX - mouseLastX: mouseX);
+		coord_buffer.put(1, grab? mouseY - mouseLastY: mouseY);
+		buttons.put(0, mouseLeft? (byte) 1: (byte) 0);
+		mouseLastX = mouseX;
+		mouseLastY = mouseY;
 	}
 
 	public void readMouse(ByteBuffer buffer) {
+		event_queue.copyEvents(buffer);
 	}
 
 	public void setCursorPosition(int x, int y) {
 	}
 
 	public void grabMouse(boolean new_grab) {
+		System.out.println("Grab: " + new_grab);
+		grab = new_grab;
 	}
 
 	private boolean shouldWarpPointer() {
@@ -202,6 +229,36 @@ final class AndroidDisplay implements DisplayImplementation {
 		return 0;
 	}
 
+	public static void putMouseEventWithCoords(byte button, byte state, int coord1, int coord2, int dz, long nanos) {
+		if (grab) {
+			/*int deltaX = coord1 - mouseLastEventX;
+			int deltaY = coord2 - mouseLastEventY;
+			mouseLastEventX = coord1;
+			mouseLastEventY = coord2;
+			coord1 = deltaX;
+			coord2 = deltaY;*/
+			if (state == 1) {
+				mouseLastX = coord1;
+				mouseLastY = coord2;
+			}
+			return;
+		}
+		event_buffer.clear();
+		event_buffer.put(button).put(state).putInt(coord1).putInt(coord2).putInt(dz).putLong(nanos);
+		event_buffer.flip();
+		event_queue.putEvent(event_buffer);
+		last_event_nanos = nanos;
+	}
+
+	public static void setMouseButtonInGrabMode(byte button, byte state) {
+		long nanos = System.nanoTime();
+		event_buffer.clear();
+		event_buffer.put(button).put(state).putInt(0).putInt(0).putInt(0).putLong(nanos);
+		event_buffer.flip();
+		event_queue.putEvent(event_buffer);
+		last_event_nanos = nanos;
+	}
+
 	/* Keyboard */
 	public void createKeyboard() throws LWJGLException {
 	}
@@ -210,9 +267,30 @@ final class AndroidDisplay implements DisplayImplementation {
 	}
 
 	public void pollKeyboard(ByteBuffer keyDownBuffer) {
+		int old_position = keyDownBuffer.position();
+		keyDownBuffer.put(key_down_buffer);
+		keyDownBuffer.position(old_position);
 	}
 
 	public void readKeyboard(ByteBuffer buffer) {
+		keyboardEventQueue.copyEvents(buffer);
+	}
+
+	public static void setKey(int keycode, boolean down) {
+		byte state = down? (byte) 1: (byte) 0;
+		long nanos = System.nanoTime();
+		putKeyboardEvent(keycode, state, 0, nanos, false);
+		setKeyDown(keycode, state);
+	}
+	private static void setKeyDown(int keycode, byte state) {
+		key_down_buffer[keycode] = state;
+	}
+
+	private static void putKeyboardEvent(int keycode, byte state, int ch, long nanos, boolean repeat) {
+		keyboardEvent.clear();
+		keyboardEvent.putInt(keycode).put(state).putInt(ch).putLong(nanos).put(repeat ? (byte)1 : (byte)0);
+		keyboardEvent.flip();
+		keyboardEventQueue.putEvent(keyboardEvent);
 	}
 
 	public Object createCursor(int width, int height, int xHotspot, int yHotspot, int numImages, IntBuffer images, IntBuffer delays) throws LWJGLException {
@@ -276,11 +354,11 @@ final class AndroidDisplay implements DisplayImplementation {
 	}
 	
 	public int getWidth() {
-		return window_width;
+		return windowWidth;//window_width;
 	}
 
 	public int getHeight() {
-		return window_height;
+		return windowHeight;//window_height;
 	}
 
 	public boolean isInsideWindow() {
