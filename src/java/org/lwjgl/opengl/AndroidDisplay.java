@@ -276,11 +276,11 @@ public final class AndroidDisplay implements DisplayImplementation {
 		keyboardEventQueue.copyEvents(buffer);
 	}
 
-	public static void setKey(int keycode, boolean down) {
+	public static void setKey(int keycode, char keyChar, boolean down) {
 		byte state = down? (byte) 1: (byte) 0;
 		long nanos = System.nanoTime();
-		putKeyboardEvent(keycode, state, 0, nanos, false);
-		setKeyDown(keycode, state);
+		putKeyboardEvent(keycode, state, keyChar, nanos, false);
+		if (keycode != 0) setKeyDown(keycode, state);
 	}
 	private static void setKeyDown(int keycode, byte state) {
 		key_down_buffer[keycode] = state;

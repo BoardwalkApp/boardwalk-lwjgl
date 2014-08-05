@@ -32,6 +32,7 @@ bool extgl_Open(JNIEnv *env) {
 }
 
 void *extgl_GetProcAddress(const char *name) {
+	if (strstr(name, "glBlendFuncSeparate")) return NULL;
     // glX calls
 
     // GL_ARB_vertex_buffer_object
@@ -107,10 +108,12 @@ void *extgl_GetProcAddress(const char *name) {
     ARB(glBlendColor);
     EXT(glBlendEquationSeparatei);
     ARB(glBlendEquationSeparatei);
+//  this isn't supported on all devices
     EXT(glBlendFuncSeparate);
     ARB(glBlendFuncSeparate);
     EXT(glBlendFuncSeparatei);
     ARB(glBlendFuncSeparatei);
+
     EXT(glClientActiveTexture);
     ARB(glClientActiveTexture);
     EXT(glDrawRangeElements);
@@ -168,4 +171,8 @@ void *extgl_GetProcAddress(const char *name) {
 void extgl_Close(void) {
 	dlclose(gles1);
 	dlclose(glshim);
+}
+
+JNIEXPORT void JNICALL Java_org_lwjgl_openal_AL_resetNativeStubs
+  (JNIEnv *env, jclass clazz, jclass clazz2) {
 }

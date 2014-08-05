@@ -444,6 +444,9 @@ public final class Display {
 		}
 	}
 
+	public static void setParent(net.zhuoweizhang.makeshift.java.awt.Canvas parent) {
+	}
+
 	/**
 	 * Set the fullscreen mode of the context. If no context has been created through create(),
 	 * the mode will apply when create() is called. If fullscreen is true, the context will become
