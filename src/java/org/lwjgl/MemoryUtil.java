@@ -414,6 +414,9 @@ public final class MemoryUtil {
 	}
 
 	static Field getAddressField() throws NoSuchFieldException {
+		try {
+			return getDeclaredFieldRecursive(ByteBuffer.class, "effectiveDirectAddress"); //Android ART
+		} catch (NoSuchFieldException nsf) {}
 		return getDeclaredFieldRecursive(ByteBuffer.class, "address");
 	}
 

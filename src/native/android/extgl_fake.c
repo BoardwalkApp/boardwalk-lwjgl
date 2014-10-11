@@ -158,13 +158,17 @@ void *extgl_GetProcAddress(const char *name) {
     STUB(glSelectBuffer);
     //STUB(glTexSubImage1D);
 	}
+
 	if (t == NULL) {
 		__android_log_print(ANDROID_LOG_ERROR, "LWJGLWrapper", 
 			"Could not locate symbol %s\n", name);
 	} else {
+#ifdef DEBUG_GETPROCADDRESS
 		__android_log_print(ANDROID_LOG_ERROR, "LWJGLWrapper", 
 			"Found symbol %s\n", name);
+#endif
 	}
+
 	return t;
 }
 

@@ -52,6 +52,7 @@ public final class AndroidContextImplementation implements ContextImplementation
 	public static EGLSurface draw;
 	public static EGLSurface read;
 	public static EGLContext context;
+	public static boolean current = true;
 
 	public ByteBuffer create(PeerInfo peer_info, IntBuffer attribs, ByteBuffer shared_context_handle) throws LWJGLException {
 		return ByteBuffer.allocate(4);
@@ -66,6 +67,7 @@ public final class AndroidContextImplementation implements ContextImplementation
 	}
 
 	public void releaseCurrentContext() throws LWJGLException {
+		current = false;
 	}
 
 	public void update(ByteBuffer context_handle) {
@@ -73,11 +75,12 @@ public final class AndroidContextImplementation implements ContextImplementation
 
 	public void makeCurrent(PeerInfo peer_info, ByteBuffer handle) throws LWJGLException {
 		EGL14.eglMakeCurrent(display, draw, read, context);
+		current = true;
 	}
 
 
 	public boolean isCurrent(ByteBuffer handle) throws LWJGLException {
-		return true;
+		return current;
 	}
 
 	public void setSwapInterval(int value) {
