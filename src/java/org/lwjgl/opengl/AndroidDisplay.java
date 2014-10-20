@@ -67,7 +67,7 @@ public final class AndroidDisplay implements DisplayImplementation {
 	private boolean keyboard_grabbed;
 	private boolean pointer_grabbed;
 	private boolean input_released;
-	private static boolean grab;
+	public static boolean grab;
 	private boolean focused;
 	private boolean minimized;
 	private boolean dirty;
