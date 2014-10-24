@@ -36,10 +36,10 @@ import org.lwjgl.LWJGLException;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 
-import android.opengl.EGL14;
-import android.opengl.EGLContext;
-import android.opengl.EGLDisplay;
-import android.opengl.EGLSurface;
+import javax.microedition.khronos.egl.EGL10;
+import javax.microedition.khronos.egl.EGLDisplay;
+import javax.microedition.khronos.egl.EGLSurface;
+import javax.microedition.khronos.egl.EGLContext;
 
 /**
  * @author elias_naur <elias_naur@users.sourceforge.net>
@@ -52,6 +52,7 @@ public final class AndroidContextImplementation implements ContextImplementation
 	public static EGLSurface draw;
 	public static EGLSurface read;
 	public static EGLContext context;
+	public static EGL10 theEgl;
 	public static boolean current = true;
 
 	public ByteBuffer create(PeerInfo peer_info, IntBuffer attribs, ByteBuffer shared_context_handle) throws LWJGLException {
@@ -63,7 +64,7 @@ public final class AndroidContextImplementation implements ContextImplementation
 
 	public void swapBuffers() throws LWJGLException {
 		//TODO: egl swap buffers
-		EGL14.eglSwapBuffers(display, draw);
+		theEgl.eglSwapBuffers(display, draw);
 	}
 
 	public void releaseCurrentContext() throws LWJGLException {
@@ -74,7 +75,7 @@ public final class AndroidContextImplementation implements ContextImplementation
 	}
 
 	public void makeCurrent(PeerInfo peer_info, ByteBuffer handle) throws LWJGLException {
-		EGL14.eglMakeCurrent(display, draw, read, context);
+		theEgl.eglMakeCurrent(display, draw, read, context);
 		current = true;
 	}
 
