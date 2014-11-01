@@ -126,6 +126,10 @@ public final class AL {
 				libname = "openal";
 				library_names = new String[]{"openal.dylib"};
 				break;
+			case LWJGLUtil.PLATFORM_ANDROID:
+				libname = "openal";
+				library_names = new String[]{"libopenal.so"};
+				break;
 			default:
 				throw new LWJGLException("Unknown platform: " + LWJGLUtil.getPlatform());
 		}

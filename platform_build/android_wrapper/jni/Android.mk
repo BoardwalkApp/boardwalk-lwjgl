@@ -7,6 +7,8 @@ cfiles := $(shell find -L $(LOCAL_PATH)/native/common -name "*.c" -printf "nativ
 
 cfiles += $(shell find -L $(LOCAL_PATH)/native/generated/opengl -name "*.c" -printf "native/generated/opengl/%P \n")
 
+cfiles += $(shell find -L $(LOCAL_PATH)/native/generated/openal -name "*.c" -printf "native/generated/openal/%P \n")
+
 cfiles += $(shell find -L $(LOCAL_PATH)/native/android -name "*.c" -printf "native/android/%P \n")
 
 LOCAL_SRC_FILES := $(cfiles)

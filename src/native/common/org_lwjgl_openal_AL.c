@@ -31,48 +31,17 @@
  */
 
 #include <jni.h>
+#include "org_lwjgl_openal_AL.h"
 #include "extal.h"
 
-typedef ALvoid* (ALAPIENTRY *alGetProcAddressPROC)(const ALubyte* fname);
-/* alGetProcAddress is commented out, since we don't use it anyway */
-//static alGetProcAddressPROC alGetProcAddress = NULL;
-
-/**
- * Initializes OpenAL by loading the library
- */
-/*void InitializeOpenAL(JNIEnv *env, jstring oalPath) {
-	//load our library
-	if (!extal_LoadLibrary(env, oalPath)) {
-		throwException(env, "Could not load openal library.");
-		return;
-	}
-	alGetProcAddress = (alGetProcAddressPROC)extal_NativeGetFunctionPointer("alGetProcAddress");
-	if (alGetProcAddress == NULL) {
-		extal_UnloadLibrary();
-		throwException(env, "Could not load alGetProcAddress function pointer.");
-		return;
-	}
-}*/
-
-/**
- * Retrieves a pointer to the named function
- *
- * @param function Name of function
- * @return pointer to named function, or NULL if not found
- */
-void* extal_GetProcAddress(const char* function) {
-	void *p;
-/*	p = alGetProcAddress((const ALubyte*)function);
-	if (p == NULL) {*/
-		p = extal_NativeGetFunctionPointer(function);
-		if (p == NULL) {
-			printfDebug("Could not locate symbol %s\n", function);
-		}
-//	}
-	return p;
+JNIEXPORT void JNICALL Java_org_lwjgl_openal_AL_nCreate(JNIEnv *env, jclass clazz, jstring oalPath) {
+	extal_LoadLibrary(env, oalPath);
 }
 
-void extal_InitializeClass(JNIEnv *env, jclass clazz, int num_functions, JavaMethodAndExtFunction *functions) {
-	ext_InitializeClass(env, clazz, &extal_GetProcAddress, num_functions, functions);
+JNIEXPORT void JNICALL Java_org_lwjgl_openal_AL_nDestroy(JNIEnv *env, jclass clazz) {
+	extal_UnloadLibrary();
 }
 
+JNIEXPORT void JNICALL Java_org_lwjgl_openal_AL_resetNativeStubs(JNIEnv *env, jclass clazz, jclass al_class) {
+	(*env)->UnregisterNatives(env, al_class);
+}

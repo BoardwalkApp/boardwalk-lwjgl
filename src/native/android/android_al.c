@@ -30,49 +30,36 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <jni.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include "org_lwjgl_openal_AL.h"
 #include "extal.h"
+#include "common_tools.h"
 
-typedef ALvoid* (ALAPIENTRY *alGetProcAddressPROC)(const ALubyte* fname);
-/* alGetProcAddress is commented out, since we don't use it anyway */
-//static alGetProcAddressPROC alGetProcAddress = NULL;
+#include <dlfcn.h>
 
-/**
- * Initializes OpenAL by loading the library
- */
-/*void InitializeOpenAL(JNIEnv *env, jstring oalPath) {
-	//load our library
-	if (!extal_LoadLibrary(env, oalPath)) {
-		throwException(env, "Could not load openal library.");
-		return;
-	}
-	alGetProcAddress = (alGetProcAddressPROC)extal_NativeGetFunctionPointer("alGetProcAddress");
-	if (alGetProcAddress == NULL) {
-		extal_UnloadLibrary();
-		throwException(env, "Could not load alGetProcAddress function pointer.");
-		return;
-	}
-}*/
+static void* handleOAL;
 
-/**
- * Retrieves a pointer to the named function
- *
- * @param function Name of function
- * @return pointer to named function, or NULL if not found
- */
-void* extal_GetProcAddress(const char* function) {
-	void *p;
-/*	p = alGetProcAddress((const ALubyte*)function);
-	if (p == NULL) {*/
-		p = extal_NativeGetFunctionPointer(function);
-		if (p == NULL) {
-			printfDebug("Could not locate symbol %s\n", function);
-		}
-//	}
-	return p;
+void *extal_NativeGetFunctionPointer(const char *function) {
+	return dlsym(handleOAL, function);
 }
 
-void extal_InitializeClass(JNIEnv *env, jclass clazz, int num_functions, JavaMethodAndExtFunction *functions) {
-	ext_InitializeClass(env, clazz, &extal_GetProcAddress, num_functions, functions);
+void extal_LoadLibrary(JNIEnv *env, jstring path) {
+	char *path_str = GetStringNativeChars(env, path);
+	printfDebugJava(env, "Testing '%s'", path_str);
+	handleOAL = dlopen(path_str, RTLD_LAZY);
+	if (handleOAL != NULL) {
+		printfDebugJava(env, "Found OpenAL at '%s'", path_str);
+	} else {
+		throwException(env, "Could not load OpenAL library");
+	}
+	free(path_str);
 }
 
+void extal_UnloadLibrary() {
+	if (handleOAL != NULL) {
+		dlclose(handleOAL);
+		handleOAL = NULL;
+	}
+}

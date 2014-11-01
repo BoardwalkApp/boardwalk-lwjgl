@@ -176,7 +176,3 @@ void extgl_Close(void) {
 	dlclose(gles1);
 	dlclose(glshim);
 }
-
-JNIEXPORT void JNICALL Java_org_lwjgl_openal_AL_resetNativeStubs
-  (JNIEnv *env, jclass clazz, jclass clazz2) {
-}
