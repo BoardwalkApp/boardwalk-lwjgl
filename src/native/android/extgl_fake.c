@@ -1,7 +1,7 @@
 #include <string.h>
 #include <jni.h>
 #include <dlfcn.h>
-#include <android/log.h>
+#include <stdio.h>
 
 #include "extgl.h"
 
@@ -17,7 +17,7 @@ static void* glshim;
 
 #define STUB(func_name)                       \
     if (strcmp(name, #func_name) == 0) {      \
-        __android_log_print(ANDROID_LOG_INFO, "LWJGLWrapper", "glX stub: %s\n", #func_name); \
+        printf("LWJGLWrapper: glX stub: %s\n", #func_name); \
         return (void *)glXStub;               \
     }
 
@@ -160,12 +160,10 @@ void *extgl_GetProcAddress(const char *name) {
 	}
 
 	if (t == NULL) {
-		__android_log_print(ANDROID_LOG_ERROR, "LWJGLWrapper", 
-			"Could not locate symbol %s\n", name);
+		printf("LWJGLWrapper: Could not locate symbol %s\n", name);
 	} else {
 #ifdef DEBUG_GETPROCADDRESS
-		__android_log_print(ANDROID_LOG_ERROR, "LWJGLWrapper", 
-			"Found symbol %s\n", name);
+		printf("LWJGLWrapper: Found symbol %s\n", name);
 #endif
 	}
 
