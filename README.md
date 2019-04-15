@@ -1,3 +1,11 @@
+A fork of LWJGL that uses glShim to run on Android, used by Boardwalk 1.x to run Minecraft.
+
+See the [main Boardwalk repo](https://github.com/zhuowei/Boardwalk) for details and build instructions.
+
+The original README of LWJGL is included below:
+
+----
+
 LWJGL - Lightweight Java Game Library
 ======
 
